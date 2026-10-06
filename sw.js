@@ -1,7 +1,7 @@
 /* Работа без интернета. Если интернет есть — берётся свежая версия с сайта,
    если нет — сохранённая копия. Записи тренировок здесь не хранятся,
    они лежат в памяти приложения на телефоне. */
-var CACHE = "trenirovki-v1";
+var CACHE = "trenirovki-v2";
 var FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
 
 self.addEventListener("install", function (e) {

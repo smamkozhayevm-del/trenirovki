@@ -1,15 +1,14 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#E6EAED" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#12181D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0D0F12">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Тяни — Толкай — Плыви (офлайн)</title>
+<title>Тяни — Толкай — Плыви</title>
 <style>
 :root{
   box-sizing:border-box;
@@ -30,10 +29,12 @@
   }
 }
 :root[data-theme="dark"]{
-  --bg:#12181D; --paper:#1A2229; --ink:#E7ECEF; --muted:#98A4AE; --line:#2C3740;
-  --pull:#5C9BE6; --pull-soft:#1D3450; --push:#EE6A61; --push-soft:#4A2320;
-  --plate:#0B0F12; --muscle-base:#34414B; --gold:#E8B83A;
-    --swim:#3CC4C0; --swim-soft:#173F3F;
+  color-scheme:dark;
+  --bg:#0D0F12; --paper:#16191E; --ink:#ECEFF2; --muted:#9AA3AD; --line:#2A3038;
+  --pull:#5C9BE6; --pull-soft:#1C2E45; --push:#EE6A61; --push-soft:#43201E;
+  --plate:#08090B; --muscle-base:#323A44; --gold:#E8B83A;
+  --swim:#3CC4C0; --swim-soft:#143837;
+  --live:#3DDC84; --claw:#E3262B;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
@@ -43,25 +44,26 @@ h1,h2,h3{font-family:"Unbounded","Arial Black",system-ui,sans-serif;line-height:
 img,svg{max-width:100%}
 
 /* hero */
-header{padding:28px 0 8px}
-h1{font-size:clamp(28px,7vw,52px);font-weight:800;letter-spacing:-.02em}
-.sub{color:var(--muted);margin:10px 0 0;max-width:60ch}
+header{padding:20px 0 6px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand svg{width:40px;height:40px;flex:none;border-radius:11px;background:#000}
+h1{font-size:clamp(20px,5.6vw,30px);font-weight:800;letter-spacing:-.02em}
 
-/* plates = day tabs */
-.plates{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(8px,1.8vw,18px);margin:26px 0 8px}
-@media (max-width:640px){.plates{grid-template-columns:repeat(4,1fr);row-gap:16px}}
-.plate{appearance:none;border:0;background:none;padding:0;cursor:pointer;color:inherit;font:inherit;text-align:center}
-.disc{position:relative;aspect-ratio:1;border-radius:50%;background:var(--plate);display:grid;place-items:center;
-  box-shadow:inset 0 0 0 clamp(5px,1.6vw,10px) var(--c),inset 0 0 0 clamp(7px,2.2vw,14px) var(--plate);transition:transform .25s ease}
-.disc::after{content:"";position:absolute;width:18%;aspect-ratio:1;border-radius:50%;background:var(--bg);box-shadow:0 0 0 3px #3A444C}
-.disc b{position:absolute;top:17%;font:700 clamp(9px,2.2vw,13px)/1 "Unbounded",sans-serif;color:#fff}
-.disc span{position:absolute;bottom:18%;font:800 clamp(11px,3vw,18px)/1 "Unbounded",sans-serif;color:var(--c)}
-.plate .cap{display:block;margin-top:8px;font-size:clamp(11px,2.6vw,14px);line-height:1.3;color:var(--muted)}
-.plate[aria-selected="true"] .disc{transform:translateY(-6px) rotate(-8deg)}
-.plate[aria-selected="true"] .cap{color:var(--ink);font-weight:600}
-.plate:focus-visible{outline:3px solid var(--gold);outline-offset:4px;border-radius:12px}
-.plate.today .cap::after{content:" · сегодня";color:var(--gold)}
-.plate.next .cap::after{content:" · следующая";color:var(--gold)}
+/* неделя: дни с галочками */
+.plates{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(4px,1.4vw,10px);margin:18px 0 8px}
+.plate{appearance:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 2px 9px;border:1px solid var(--line);border-radius:14px;background:transparent;cursor:pointer;color:var(--ink);font:inherit;text-align:center;min-width:0}
+.plate .dw{font:700 clamp(12px,3.4vw,15px)/1 "Unbounded",sans-serif}
+.plate .ck{width:clamp(24px,7vw,30px);aspect-ratio:1;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:transparent}
+.plate .ck svg{width:70%;height:70%}
+.plate .cap{display:block;font-size:clamp(9.5px,2.6vw,12px);line-height:1.15;color:var(--c);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.plate .cap-s{display:none}
+@media (max-width:640px){.plate .cap-l{display:none}.plate .cap-s{display:inline}}
+.plate.done .ck{background:var(--live);border-color:var(--live);color:#06240F}
+.plate[aria-selected="true"]{background:var(--paper);border-color:var(--c)}
+.plate.today{border-color:var(--live);box-shadow:inset 0 0 0 1px var(--live),0 0 18px rgba(61,220,132,.35)}
+.plate.today .dw{color:var(--live)}
+.plate.today:not(.done) .ck{border-color:var(--live)}
+.plate:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .next-note{margin:6px 0 0;font-size:15px;color:var(--muted)}
 .next-note b{color:var(--ink)}
 
@@ -274,12 +276,10 @@ footer{color:var(--muted);font-size:14px;padding:40px 0 30px}
 <body>
 <div class="wrap">
   <header>
-    <h1>Тяни — Толкай — Плыви<br>7 дней в неделю</h1>
-    <p class="sub">Семь тренировок в неделю: зал в понедельник, среду, пятницу и воскресенье, бассейн во вторник, четверг и субботу. В бассейне выбираешь, плаваешь в удовольствие или тренируешься, и для тренировки записываешь дистанцию, баттерфляй и лягушку — с остановкой или без. Первым в каждом дне записываешь сон: сколько спал и во сколько проснулся. Сайт сам открывает сегодняшний день. <b>Приложение:</b> работает без интернета, записи хранятся на этом телефоне. Перенести их с сайта или обратно можно через резервную копию CSV внизу. Вписывай вес и повторы по подходам — всё сохраняется само, а в следующий раз рядом будет видно, сколько сделал в прошлый.</p>
-
+    <div class="brand"><svg viewBox="0 0 100 100" aria-hidden="true"><path fill="var(--claw)" d="M42.0 13.3 L40.2 14.2 L39.3 15.3 L38.5 16.4 L37.8 17.5 L37.2 18.6 L36.7 19.7 L36.1 20.9 L35.6 22.0 L35.1 23.1 L34.6 24.3 L34.2 25.4 L33.7 26.6 L33.3 27.8 L32.9 28.9 L32.4 30.1 L32.0 31.3 L31.6 32.4 L31.2 33.6 L30.7 34.8 L30.3 36.0 L29.9 37.2 L29.5 38.4 L29.1 39.6 L28.7 40.8 L28.3 42.0 L27.8 43.2 L27.4 44.4 L27.0 45.6 L26.6 46.9 L26.1 48.1 L25.7 49.3 L25.3 50.6 L24.8 51.8 L24.4 53.1 L23.9 54.3 L23.5 55.6 L23.0 56.8 L22.5 58.1 L22.0 59.4 L21.6 60.6 L21.1 61.9 L20.6 63.2 L20.1 64.5 L19.6 65.8 L19.0 67.1 L18.5 68.3 L18.0 69.6 L17.4 70.9 L16.9 72.3 L16.3 73.6 L15.7 74.9 L15.1 76.2 L14.6 77.5 L13.9 78.8 L13.3 80.1 L12.7 81.5 L12.1 82.8 L11.4 84.1 L10.7 85.4 L10.0 86.7 L10.0 86.7 L10.9 85.6 L11.9 84.4 L12.9 83.3 L13.8 82.2 L14.8 81.1 L15.7 79.9 L16.6 78.8 L17.5 77.7 L18.5 76.5 L19.4 75.4 L20.3 74.3 L21.1 73.1 L22.0 72.0 L22.9 70.8 L23.7 69.7 L24.6 68.5 L25.4 67.4 L26.2 66.2 L27.0 65.0 L27.8 63.8 L28.5 62.7 L29.3 61.5 L30.1 60.3 L30.8 59.1 L31.5 57.9 L32.2 56.7 L32.9 55.5 L33.6 54.3 L34.2 53.1 L34.9 51.9 L35.5 50.7 L36.1 49.5 L36.7 48.2 L37.3 47.0 L37.8 45.8 L38.4 44.5 L38.9 43.3 L39.4 42.0 L39.9 40.8 L40.3 39.5 L40.8 38.3 L41.2 37.0 L41.6 35.7 L42.0 34.5 L42.3 33.2 L42.7 31.9 L43.0 30.6 L43.2 29.3 L43.5 28.0 L43.7 26.8 L43.9 25.5 L44.0 24.1 L44.1 22.8 L44.2 21.5 L44.2 20.2 L44.1 18.9 L44.0 17.5 L43.8 16.2 L43.3 14.8 L42.0 13.3ZM66.0 2.0 L63.9 3.1 L62.9 4.3 L62.1 5.6 L61.3 6.9 L60.7 8.2 L60.1 9.5 L59.5 10.8 L58.9 12.1 L58.4 13.4 L57.9 14.7 L57.4 16.1 L57.0 17.4 L56.5 18.7 L56.0 20.1 L55.6 21.4 L55.2 22.8 L54.7 24.1 L54.3 25.5 L53.9 26.8 L53.5 28.2 L53.1 29.6 L52.7 30.9 L52.3 32.3 L51.8 33.7 L51.4 35.1 L51.0 36.5 L50.6 37.8 L50.2 39.2 L49.8 40.6 L49.4 42.0 L48.9 43.5 L48.5 44.9 L48.1 46.3 L47.7 47.7 L47.2 49.1 L46.8 50.6 L46.3 52.0 L45.9 53.4 L45.4 54.9 L45.0 56.3 L44.5 57.8 L44.0 59.2 L43.6 60.7 L43.1 62.2 L42.6 63.6 L42.1 65.1 L41.6 66.6 L41.1 68.1 L40.5 69.6 L40.0 71.0 L39.5 72.5 L38.9 74.0 L38.4 75.5 L37.8 77.0 L37.2 78.5 L36.6 80.0 L36.0 81.5 L35.3 83.0 L34.7 84.5 L34.0 86.0 L34.0 86.0 L35.0 84.7 L35.9 83.4 L36.9 82.1 L37.9 80.8 L38.9 79.5 L39.9 78.2 L40.8 76.9 L41.8 75.6 L42.7 74.3 L43.7 73.0 L44.6 71.6 L45.5 70.3 L46.4 69.0 L47.3 67.7 L48.2 66.4 L49.0 65.0 L49.9 63.7 L50.7 62.4 L51.5 61.0 L52.3 59.7 L53.1 58.3 L53.9 57.0 L54.7 55.6 L55.4 54.2 L56.2 52.9 L56.9 51.5 L57.6 50.1 L58.3 48.7 L59.0 47.3 L59.6 46.0 L60.3 44.6 L60.9 43.2 L61.5 41.8 L62.1 40.3 L62.7 38.9 L63.2 37.5 L63.7 36.1 L64.2 34.7 L64.7 33.2 L65.2 31.8 L65.6 30.4 L66.0 28.9 L66.4 27.5 L66.8 26.0 L67.1 24.6 L67.5 23.1 L67.8 21.7 L68.0 20.2 L68.2 18.7 L68.4 17.3 L68.6 15.8 L68.7 14.3 L68.8 12.8 L68.8 11.3 L68.7 9.8 L68.6 8.3 L68.4 6.8 L68.1 5.3 L67.6 3.7 L66.0 2.0ZM90.0 13.3 L88.2 14.2 L87.3 15.3 L86.5 16.4 L85.8 17.5 L85.2 18.6 L84.7 19.7 L84.1 20.9 L83.6 22.0 L83.1 23.1 L82.6 24.3 L82.2 25.4 L81.7 26.6 L81.3 27.8 L80.9 28.9 L80.4 30.1 L80.0 31.3 L79.6 32.4 L79.2 33.6 L78.7 34.8 L78.3 36.0 L77.9 37.2 L77.5 38.4 L77.1 39.6 L76.7 40.8 L76.3 42.0 L75.8 43.2 L75.4 44.4 L75.0 45.6 L74.6 46.9 L74.1 48.1 L73.7 49.3 L73.3 50.6 L72.8 51.8 L72.4 53.1 L71.9 54.3 L71.5 55.6 L71.0 56.8 L70.5 58.1 L70.0 59.4 L69.6 60.6 L69.1 61.9 L68.6 63.2 L68.1 64.5 L67.6 65.8 L67.0 67.1 L66.5 68.3 L66.0 69.6 L65.4 70.9 L64.9 72.3 L64.3 73.6 L63.7 74.9 L63.1 76.2 L62.6 77.5 L61.9 78.8 L61.3 80.1 L60.7 81.5 L60.1 82.8 L59.4 84.1 L58.7 85.4 L58.0 86.7 L58.0 86.7 L58.9 85.6 L59.9 84.4 L60.9 83.3 L61.8 82.2 L62.8 81.1 L63.7 79.9 L64.6 78.8 L65.5 77.7 L66.5 76.5 L67.4 75.4 L68.3 74.3 L69.1 73.1 L70.0 72.0 L70.9 70.8 L71.7 69.7 L72.6 68.5 L73.4 67.4 L74.2 66.2 L75.0 65.0 L75.8 63.8 L76.5 62.7 L77.3 61.5 L78.1 60.3 L78.8 59.1 L79.5 57.9 L80.2 56.7 L80.9 55.5 L81.6 54.3 L82.2 53.1 L82.9 51.9 L83.5 50.7 L84.1 49.5 L84.7 48.2 L85.3 47.0 L85.8 45.8 L86.4 44.5 L86.9 43.3 L87.4 42.0 L87.9 40.8 L88.3 39.5 L88.8 38.3 L89.2 37.0 L89.6 35.7 L90.0 34.5 L90.3 33.2 L90.7 31.9 L91.0 30.6 L91.2 29.3 L91.5 28.0 L91.7 26.8 L91.9 25.5 L92.0 24.1 L92.1 22.8 L92.2 21.5 L92.2 20.2 L92.1 18.9 L92.0 17.5 L91.8 16.2 L91.3 14.8 L90.0 13.3Z"/></svg><h1>Тяни — Толкай — Плыви</h1></div>
     <button type="button" class="bk-btn primary" id="installBtn" style="margin-top:14px" hidden>Установить на телефон</button>
     <a class="bk-nag" id="bkNag" href="#backup" hidden></a>
-    <div class="plates" role="tablist" aria-label="Тренировки по кругу" id="plates"></div>
+    <div class="plates" role="tablist" aria-label="Дни недели" id="plates"></div>
     <p class="next-note" id="nextNote" role="status"></p>
   </header>
 
@@ -724,7 +724,7 @@ if(!window.claude){ window.claude={use:function(name){
 
   var statusEl = null;
   function setStatus(t){ statusEl = document.getElementById("status"); if(statusEl) statusEl.textContent = t; }
-  function baseStatus(){ return store.mode==="db" ? "Записи сохраняются в твоём аккаунте" : "Записи сохраняются в этом браузере"; }
+  function baseStatus(){ return store.mode==="db" ? "Записи сохраняются в твоём аккаунте" : "Записи сохраняются на этом телефоне"; }
 
   var timers = {}, chains = {};
   function scheduleSave(id){
@@ -818,7 +818,7 @@ if(!window.claude){ window.claude={use:function(name){
     btn.setAttribute("role","tab"); btn.id="tab-"+d.id;
     btn.style.setProperty("--c", kindCol(d.kind));
     var total=d.ex.reduce(function(a,e){return a+e.s},0);
-    btn.innerHTML='<div class="disc"><b>'+d.dow+'</b><span>'+(d.kind==="pool"?"≈":d.title.split(" ")[1])+'</span></div><span class="cap">'+d.title+'</span>';
+    btn.innerHTML='<span class="dw">'+d.dow+'</span><span class="ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 7.8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="cap"><span class="cap-l">'+d.title+'</span><span class="cap-s">'+(d.kind==="pool"?"Плыви":d.kind==="push"?"Толк "+d.title.split(" ")[1]:d.title)+'</span></span>';
     btn.setAttribute("aria-label", d.dow+", "+d.title+(d.kind==="pool"?"":", "+total+" подходов"));
     btn.addEventListener("click",function(){ userPicked=true; select(i); });
     btn.addEventListener("keydown",function(ev){
@@ -829,8 +829,18 @@ if(!window.claude){ window.claude={use:function(name){
     platesEl.appendChild(btn);
   });
 
+  function weekDone(){
+    var mon=weekKey(todayStr()), sun=addDays(mon,6), done={};
+    Object.keys(store.cache).forEach(function(id){ var s=store.cache[id];
+      if(!s||!s.date||s.date<mon||s.date>sun||!s.day) return;
+      var ok=poolDone(s) || !!(s.ex&&Object.keys(s.ex).some(function(n){ return setList(s.ex[n]).length; }));
+      if(ok) done[s.day]=1; });
+    return done;
+  }
   function updateNext(applySel){
     NI=nextInfo();
+    var wd=weekDone(), cnt=0;
+    Array.prototype.forEach.call(platesEl.children,function(b,k){ var on=!!wd[DAYS[k].id]; if(on) cnt++; b.classList.toggle("done",on); });
     Array.prototype.forEach.call(platesEl.children,function(b,k){
       b.classList.toggle("today", k===NI.idx && NI.state!=="rest");
       b.classList.toggle("next", k===NI.idx && NI.state==="rest"); });
@@ -838,6 +848,7 @@ if(!window.claude){ window.claude={use:function(name){
     if(n) n.innerHTML = NI.state==="done" ? (d.kind==="pool" ? "Сегодняшний <b>бассейн</b> записан, отличная работа." : "Сегодняшняя тренировка <b>"+d.title+"</b> записана, отличная работа.")
       : NI.state==="rest" ? "Сегодня отдых. Следующая тренировка "+NI.when+": <b>"+d.title+"</b>."
       : "Сегодня — <b>"+d.title+"</b>.";
+    if(n) n.innerHTML += " На этой неделе "+cnt+" из "+DAYS.length+".";
     if(applySel && !userPicked && !editing && current!==NI.idx) select(NI.idx);
   }
   function select(i){
