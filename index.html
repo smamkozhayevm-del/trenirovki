@@ -213,17 +213,20 @@ h1{font-size:clamp(20px,5.6vw,30px);font-weight:800;letter-spacing:-.02em}
   .sets small{display:inline;margin-left:8px}
 }
 
-/* сон */
-.sl{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px;background:var(--bg);border-radius:14px;padding:14px 16px;margin:12px 0 8px;box-shadow:inset 4px 0 0 var(--gold)}
-.sl h3{font-size:16px;flex-basis:100%;margin:0}
-.sl-f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
-.sl-in{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
-.sl input{font:600 16px/1 "Golos Text",sans-serif;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:10px;height:42px;text-align:center;padding:0 4px}
-.sl input:focus{outline:none;border-color:var(--gold)}
-.sl .sl-h,.sl .sl-m{width:46px}
-.sl .sl-w{width:118px}
-.sl-sum{flex:1 1 220px;font-size:14px;color:var(--muted);align-self:center}
-.sl-sum b{display:block;color:var(--ink);font-size:16px}
+/* эспандер */
+.gr{background:var(--bg);border-radius:14px;padding:14px 16px;margin:12px 0 8px;box-shadow:inset 4px 0 0 var(--gold)}
+.gr-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;margin-bottom:10px}
+.gr h3{font-size:16px;margin:0}
+.gr-wk{font-size:13px;color:var(--muted)}
+.gr-body{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 18px}
+.gr-f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.gr-sets{display:grid;grid-template-columns:22px repeat(4,48px);gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.gr-sets .hd{text-align:center}
+.gr input{font:600 16px/1 "Golos Text",sans-serif;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:10px;height:42px;width:48px;text-align:center;padding:0 4px}
+.gr .gr-k{width:64px}
+.gr input:focus{outline:none;border-color:var(--gold)}
+.gr-sum{flex:1 1 220px;font-size:14px;color:var(--muted);margin:0;align-self:center}
+.gr-sum b{display:block;color:var(--ink);font-size:16px}
 
 /* бассейн */
 .sw-wrap{padding-bottom:14px}
@@ -321,7 +324,7 @@ footer{color:var(--muted);font-size:14px;padding:40px 0 30px}
 
     <section class="block" id="backup">
       <h2>Резервная копия</h2>
-      <p class="lead">Все записи и твой план в одном CSV-файле. Сохрани его в iCloud, Google Диск или отправь себе в Telegram. Файл открывается в Excel, а если что-то пропадёт, его можно загрузить обратно.</p>
+      <p class="lead">Все записи, эспандер и твой план в одном CSV-файле. Сохрани его в iCloud, Google Диск или отправь себе в Telegram. Файл открывается в Excel, а если что-то пропадёт, его можно загрузить обратно.</p>
       <div class="bk">
         <button type="button" class="bk-btn primary" id="bkSave" hidden>Скачать копию (CSV)</button>
         <label class="bk-btn" id="bkLoadL">Восстановить из копии<input type="file" id="bkLoad" accept=".csv,text/csv,text/plain" hidden></label>
@@ -344,8 +347,8 @@ footer{color:var(--muted);font-size:14px;padding:40px 0 30px}
         <div class="card">
           <h3>Кистевой эспандер</h3>
           <ul>
-            <li>3–4 раза в неделю, можно дома вечером после бассейна.</li>
-            <li>3–4 подхода по 10–15 сжатий на каждую руку.</li>
+            <li>2 раза в неделю, в дни «Толкай» (Ср и Вс) — первым упражнением. Там кисть почти не работает, а в дни «Тяни» хват и так нагружен тягами. Блок записи — над таблицей дня.</li>
+            <li>4 подхода по 10–15 сжатий на каждую руку.</li>
             <li>15 сжатий легко — бери эспандер жёстче или держи паузу 2–3 секунды в сжатии.</li>
             <li>Заболел локоть или запястье — неделя перерыва.</li>
           </ul>
@@ -893,7 +896,7 @@ if(!window.claude){ window.claude={use:function(name){
     var h='<div class="panel-head"><div><h2>'+d.dow+' — '+d.title+'</h2><p>'+noteFor(ex)+'. '+podh(total)+', около '+mins+' минут.</p></div>';
     h+='<div class="head-tools"><button class="edit" type="button" id="edit">Изменить день</button><label class="date">Дата <input type="date" id="date" value="'+curDate+'" max="'+todayStr()+'"></label><button class="reset" type="button" id="reset">Очистить день</button></div></div>';
     h+='<p class="status" id="status" role="status">'+baseStatus()+'</p>';
-    h+=sleepHTML();
+    if(d.kind==="push") h+=gripHTML();
     h+='<div class="scroll-x"><table class="tbl"><thead><tr><th>№</th><th>Упражнение</th><th>Подходы × повторы</th><th>Отдых</th><th>Мышцы</th><th>Вес и повторы</th></tr></thead><tbody>';
     ex.forEach(function(e,k){
       var ent=entry(d.id,curDate,e.n)||{w:"",r:[]};
@@ -913,7 +916,7 @@ if(!window.claude){ window.claude={use:function(name){
     });
     h+='</tbody></table></div>';
     if(!ex.length) h+='<p class="empty">В этом дне нет упражнений. Нажми «Изменить день», чтобы добавить.</p>';
-    panel.innerHTML=h; bindSleep();
+    panel.innerHTML=h; bindGrip();
     panel.querySelectorAll(".pw-t").forEach(function(b){
       b.addEventListener("click",function(){
         var e=ex[+b.dataset.k], key=d.id+"|"+e.n, log=b.previousElementSibling, on=!log.classList.contains("pw-on");
@@ -969,42 +972,63 @@ if(!window.claude){ window.claude={use:function(name){
   }
 
 
-  /* ---------- сон ---------- */
-  function sleepId(date){ return "s_"+date+"_sleep"; }
-  function sleepOf(date){ var s=store.cache[sleepId(date)]; return s&&s.sleep||null; }
-  function sleepMin(sl){ if(!sl) return null; var h=num(sl.h), m=num(sl.m); if(h===null&&m===null) return null; return Math.round((h||0)*60+(m||0)); }
-  function durTxt(min){ var h=Math.floor(min/60), m=min%60; return h+" ч"+(m?" "+m+" мин":""); }
-  function sleepLine(sl){
-    var mn=sleepMin(sl), w=sl&&sl.wake, out=[];
-    if(mn) out.push("Спал "+durTxt(mn)); if(w) out.push((mn?"проснулся в ":"Проснулся в ")+w.replace(/^0/,""));
-    return out.join(", ");
-  }
+  /* ---------- эспандер ---------- */
+  var GRIP_SETS=4, GRIP_TOP=15;
   function addDays(date,k){ var p=date.split("-"), d=new Date(+p[0],+p[1]-1,+p[2]+k); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
-  function sleepAvg(date){ var sum=0,n=0; for(var k=0;k<7;k++){ var mn=sleepMin(sleepOf(addDays(date,-k))); if(mn){ sum+=mn; n++; } } return n?{avg:Math.round(sum/n),n:n}:null; }
-  function sleepSumHTML(){
-    var sl=sleepOf(curDate), line=sleepLine(sl), av=sleepAvg(curDate), mn=sleepMin(sl);
-    var hint = mn ? (mn<420?"Меньше 7 часов — мышцам не хватает времени восстановиться.":mn>600?"Больше 10 часов — если это часто, стоит присмотреться.":"В норме 7–9 часов, отлично для восстановления.") : "Впиши, сколько спал и во сколько встал.";
-    return '<b>'+esc(line||"Сон ещё не записан")+'</b>'+esc(hint)+(av&&av.n>1?' В среднем за 7 дней: '+durTxt(av.avg)+'.':'');
+  function gripId(date){ return "s_"+date+"_grip"; }
+  function gripOf(date){ var s=store.cache[gripId(date)]; return s&&s.grip||null; }
+  function gripReps(g,h){ return ((g&&g[h])||[]).map(num).filter(function(x){ return x!==null&&x>0; }); }
+  function gripDone(g){ return gripReps(g,"L").length+gripReps(g,"R").length>0; }
+  function gripLine(g){
+    if(!gripDone(g)) return "";
+    var out=[], k=num(g&&g.k), L=gripReps(g,"L"), R=gripReps(g,"R");
+    if(k) out.push("жёсткость "+fmtW(k)+" кг");
+    if(L.length) out.push("левая "+L.join(", "));
+    if(R.length) out.push("правая "+R.join(", "));
+    var t=out.join("; "); return t.charAt(0).toUpperCase()+t.slice(1);
   }
-  function sleepHTML(){
-    var sl=sleepOf(curDate)||{};
-    return '<div class="sl" id="sleep"><h3>Сон</h3>'+
-      '<div class="sl-f">Спал<span class="sl-in"><input class="sl-h" inputmode="numeric" autocomplete="off" data-f="h" value="'+esc(sl.h||"")+'" placeholder="7" aria-label="Спал, часов">ч'+
-      '<input class="sl-m" inputmode="numeric" autocomplete="off" data-f="m" value="'+esc(sl.m||"")+'" placeholder="30" aria-label="Спал, минут">мин</span></div>'+
-      '<label class="sl-f">Проснулся<input class="sl-w" type="time" data-f="wake" value="'+esc(sl.wake||"")+'"></label>'+
-      '<p class="sl-sum" id="slSum" role="status">'+sleepSumHTML()+'</p></div>';
+  function gripWeek(date){ var mon=weekKey(date), n=0; for(var k=0;k<7;k++){ if(gripDone(gripOf(addDays(mon,k)))) n++; } return n; }
+  function gripLast(date){ var best=null; Object.keys(store.cache).forEach(function(id){ var s=store.cache[id];
+      if(!s||s.day!=="grip"||!s.date||s.date>=date||!gripDone(s.grip)) return; if(!best||s.date>best.date) best=s; }); return best; }
+  function gripSumHTML(){
+    var g=gripOf(curDate), line=gripLine(g), L=gripReps(g,"L"), R=gripReps(g,"R"), hint;
+    if(!line) hint="Впиши сжатия по подходам для каждой руки: 4 подхода по 10–15.";
+    else if(L.length>=3 && R.length>=3 && L.concat(R).every(function(x){ return x>=GRIP_TOP; })) hint="Все подходы по "+GRIP_TOP+" — бери эспандер жёстче или держи паузу 2–3 секунды в сжатии.";
+    else hint="Цель — 4 подхода по 10–15 на каждую руку.";
+    var lp=gripLast(curDate);
+    return '<b>'+esc(line||"Эспандер сегодня не записан")+'</b>'+esc(hint)+(lp?' Прошлый раз '+short(lp.date)+': '+esc(gripLine(lp.grip).toLowerCase())+'.':'');
   }
-  function bindSleep(){
-    var box=document.getElementById("sleep"); if(!box) return;
-    box.querySelectorAll("input").forEach(function(inp){
-      inp.addEventListener(inp.type==="time"?"change":"input",function(){
+  function gripWkTxt(){ var n=gripWeek(curDate); var g=DAYS.filter(function(d){return d.kind==="push"}).length; return "Первым в тренировке · на этой неделе "+n+" из "+g+(n>=g?" ✓":""); }
+  function gripHTML(){
+    var g=gripOf(curDate)||{}, h='<div class="gr" id="grip"><div class="gr-top"><h3>Кистевой эспандер</h3><span class="gr-wk" id="grWk">'+gripWkTxt()+'</span></div><div class="gr-body">';
+    h+='<label class="gr-f">Жёсткость<input class="gr-k" inputmode="decimal" autocomplete="off" data-f="k" value="'+esc(g.k||"")+'" placeholder="кг"></label>';
+    h+='<div class="gr-sets"><span></span>';
+    for(var j=0;j<GRIP_SETS;j++) h+='<span class="hd">'+(j+1)+'</span>';
+    [["L","Л","левая"],["R","П","правая"]].forEach(function(hd){
+      h+='<span>'+hd[1]+'</span>';
+      for(var j=0;j<GRIP_SETS;j++){ var v=(g[hd[0]]||[])[j];
+        h+='<input inputmode="numeric" autocomplete="off" data-f="'+hd[0]+'" data-j="'+j+'" value="'+esc(v==null?"":v)+'" placeholder="–" aria-label="Эспандер, '+hd[2]+' рука, подход '+(j+1)+'">'; }
+    });
+    h+='</div><p class="gr-sum" id="grSum" role="status">'+gripSumHTML()+'</p></div></div>';
+    return h;
+  }
+  function bindGrip(){
+    var box=document.getElementById("grip"); if(!box) return;
+    var all=Array.prototype.slice.call(box.querySelectorAll("input"));
+    all.forEach(function(inp){
+      inp.addEventListener("input",function(){
         var f=inp.dataset.f, v=inp.value;
-        if(f!=="wake"){ v=v.replace(/[^0-9]/g,"").slice(0,2); if(f==="m" && +v>59) v="59"; if(f==="h" && +v>16) v="16"; if(v!==inp.value) inp.value=v; }
-        var id=sleepId(curDate), s=store.cache[id]||(store.cache[id]={day:"sleep",date:curDate,sleep:{}});
-        s.sleep=s.sleep||{}; s.sleep[f]=v; s.ts=Date.now();
-        document.getElementById("slSum").innerHTML=sleepSumHTML();
+        v = f==="k" ? v.replace(/[^0-9.,]/g,"").slice(0,5) : v.replace(/[^0-9]/g,"").slice(0,3);
+        if(v!==inp.value) inp.value=v;
+        var id=gripId(curDate), s=store.cache[id]||(store.cache[id]={day:"grip",date:curDate,grip:{}});
+        s.grip=s.grip||{};
+        if(f==="k") s.grip.k=v; else { var a=s.grip[f]||(s.grip[f]=[]); while(a.length<GRIP_SETS) a.push(""); a[+inp.dataset.j]=v; }
+        s.ts=Date.now();
+        document.getElementById("grSum").innerHTML=gripSumHTML();
+        document.getElementById("grWk").textContent=gripWkTxt();
         scheduleSave(id);
       });
+      inp.addEventListener("keydown",function(ev){ if(ev.key==="Enter"){ var n=all[all.indexOf(inp)+1]; if(n) n.focus(); else inp.blur(); } });
     });
   }
   /* ---------- бассейн ---------- */
@@ -1034,7 +1058,6 @@ if(!window.claude){ window.claude={use:function(name){
     var h='<div class="sw-wrap"><div class="panel-head"><div><h2>'+d.dow+' — '+d.title+'</h2><p>День без зала. Выбери, как сегодня плаваешь.</p></div>';
     h+='<div class="head-tools"><label class="date">Дата <input type="date" id="date" value="'+curDate+'" max="'+todayStr()+'"></label><button class="reset" type="button" id="reset">Очистить день</button></div></div>';
     h+='<p class="status" id="status" role="status">'+baseStatus()+'</p>';
-    h+=sleepHTML();
     h+='<div class="sw-mode" role="group" aria-label="Как плаваешь сегодня">'+
        '<button type="button" class="sw-opt" data-mode="fun" aria-pressed="'+(p.mode==="fun")+'"><b>В удовольствие</b><small>Просто плаваю, без цифр</small></button>'+
        '<button type="button" class="sw-opt" data-mode="train" aria-pressed="'+(p.mode==="train")+'"><b>Тренировка</b><small>Записываю дистанцию и стили</small></button></div>';
@@ -1056,7 +1079,7 @@ if(!window.claude){ window.claude={use:function(name){
     }
     var lp=lastPool(curDate);
     h+='<div class="last">'+(lp ? 'Прошлый раз '+short(lp.date)+': '+esc(poolLine(lp.pool)||"тренировка без цифр") : 'Прошлых записей в бассейне пока нет')+'</div></div>';
-    panel.innerHTML=h; bindSleep();
+    panel.innerHTML=h;
 
     function sess(){ var s=store.cache[id]||(store.cache[id]={day:d.id,date:curDate}); s.pool=s.pool||{mode:""}; return s; }
     function touch(s){ s.ts=Date.now(); scheduleSave(id); gameUpdate(true); updateNext(false); }
@@ -1425,7 +1448,7 @@ if(!window.claude){ window.claude={use:function(name){
   var bkMsg=document.getElementById("bkMsg");
   function msg(t,cls){ bkMsg.textContent=t; bkMsg.className="bk-msg"+(cls?" "+cls:""); }
   function daysSince(d){ if(!d) return Infinity; var p=d.split("-"); return Math.floor((new Date()-new Date(+p[0],+p[1]-1,+p[2]))/864e5); }
-  function sessionCount(){ return Object.keys(store.cache).filter(function(id){ var s=store.cache[id]; return poolDone(s) || (s&&s.sleep&&sleepLine(s.sleep)) || (s&&s.ex&&Object.keys(s.ex).length); }).length; }
+  function sessionCount(){ return Object.keys(store.cache).filter(function(id){ var s=store.cache[id]; return poolDone(s) || (s&&s.day==="grip"&&gripDone(s.grip)) || (s&&s.ex&&Object.keys(s.ex).length); }).length; }
   function updateNag(){
     var nag=document.getElementById("bkNag"), n=sessionCount(), ds=daysSince(lastBackup);
     if(n>=2 && ds>14){ nag.hidden=false; nag.textContent = lastBackup ? "Резервная копия не делалась "+ds+" дн. Сохранить →" : "Ты ещё ни разу не делал резервную копию. Сохранить →"; }
@@ -1463,14 +1486,14 @@ if(!window.claude){ window.claude={use:function(name){
       pRows.forEach(function(r){ var p=r[0].split("-"); out.push([p[2]+"."+p[1]+"."+p[0], r[1], r[2]].map(csvCell).join(";")); });
       out.push(csvCell("#БАССЕЙН — служебная строка для восстановления, не меняй")+";"+csvCell(JSON.stringify(pools)));
     }
-    var sleeps={}, sRows=[];
-    Object.keys(store.cache).forEach(function(id){ var s=store.cache[id]; if(!s||!s.sleep||!sleepLine(s.sleep)) return;
-      sleeps[id]={day:"sleep",date:s.date,sleep:s.sleep}; sRows.push([s.date,sleepLine(s.sleep)]); });
-    if(sRows.length){
-      sRows.sort(function(a,b){ return a[0]<b[0]?-1:1; });
+    var grips={}, gRows=[];
+    Object.keys(store.cache).forEach(function(id){ var s=store.cache[id]; if(!s||s.day!=="grip"||!gripDone(s.grip)) return;
+      grips[id]={day:"grip",date:s.date,grip:s.grip}; gRows.push([s.date,gripLine(s.grip)]); });
+    if(gRows.length){
+      gRows.sort(function(a,b){ return a[0]<b[0]?-1:1; });
       out.push("");
-      sRows.forEach(function(r){ var p=r[0].split("-"); out.push([p[2]+"."+p[1]+"."+p[0], "Сон", r[1]].map(csvCell).join(";")); });
-      out.push(csvCell("#СОН — служебная строка для восстановления, не меняй")+";"+csvCell(JSON.stringify(sleeps)));
+      gRows.forEach(function(r){ var p=r[0].split("-"); out.push([p[2]+"."+p[1]+"."+p[0], "Эспандер", r[1]].map(csvCell).join(";")); });
+      out.push(csvCell("#ЭСПАНДЕР — служебная строка для восстановления, не меняй")+";"+csvCell(JSON.stringify(grips)));
     }
     if(plan.days && Object.keys(plan.days).length){ out.push(""); out.push(csvCell("#ПЛАН — служебная строка для восстановления, не меняй")+";"+csvCell(JSON.stringify(plan))); }
     return "\uFEFF"+out.join("\r\n")+"\r\n";
@@ -1525,8 +1548,9 @@ if(!window.claude){ window.claude={use:function(name){
       for(var i=1;i<rows.length;i++){ var r=rows[i]; if(!r||!r.length||!String(r[0]).trim()) continue;
         if(String(r[0]).indexOf("#БАССЕЙН")===0){ try{ var pj2=JSON.parse(r[1]); Object.keys(pj2||{}).forEach(function(pid){ var v=pj2[pid];
             if(pid.indexOf("s_")===0 && v && v.pool && v.date && v.day){ store.cache[pid]={day:v.day,date:v.date,pool:v.pool,ts:Date.now()}; touched[pid]=1; count++; } }); }catch(e){} continue; }
-        if(String(r[0]).indexOf("#СОН")===0){ try{ var sj=JSON.parse(r[1]); Object.keys(sj||{}).forEach(function(sid){ var v=sj[sid];
-            if(/^s_\d{4}-\d{2}-\d{2}_sleep$/.test(sid) && v && v.sleep && v.date){ store.cache[sid]={day:"sleep",date:v.date,sleep:v.sleep,ts:Date.now()}; touched[sid]=1; count++; } }); }catch(e){} continue; }
+        if(String(r[0]).indexOf("#ЭСПАНДЕР")===0){ try{ var gj=JSON.parse(r[1]); Object.keys(gj||{}).forEach(function(gid){ var v=gj[gid];
+            if(/^s_\d{4}-\d{2}-\d{2}_grip$/.test(gid) && v && v.grip && v.date){ store.cache[gid]={day:"grip",date:v.date,grip:v.grip,ts:Date.now()}; touched[gid]=1; count++; } }); }catch(e){} continue; }
+        if(String(r[0]).indexOf("#СОН")===0) continue;
         if(String(r[0]).indexOf("#ПЛАН")===0){ try{ var pj=JSON.parse(r[1]); if(pj&&pj.days) newPlan=pj; }catch(e){} continue; }
         var date=normDate(r[0]), day=DAYID[String(r[1]||"").trim().toLowerCase()], name=String(r[2]||"").trim().slice(0,60);
         if(!date||!day||!name) continue;
